@@ -1,25 +1,31 @@
-import { humanize } from '@/lib/utils/textConverter'
 import React from 'react'
 import type { IconProps } from 'react-feather'
 import * as Icon from 'react-feather'
 
+type Props = IconProps & { name?: string }
+
 /**
- * This component is a wrapper around react-feather icons prepared to be used in the markdown files content of the project.
- * @see astro.config.js for the configuration of the auto-import plugin.
- * @see https://www.npmjs.com/package/astro-auto-import?activeTab=readme for more information.
- * @param props
- * @returns
+ * Wrapper that normalizes a passed icon name to the PascalCase export used by react-feather.
  */
-export default function FeatherIcon(props: IconProps) {
+export default function FeatherIcon(props: Props) {
+  const { name, ...rest } = props
 
-    // return <p>{props.name}</p>ç
-    const iconName = props.name?.startsWith("_") ? props.name.substring(1,props.name.length) : humanize(props.name as string)
+  if (!name) return null
 
-    const IconI = Icon[iconName]
+  // strip leading underscore (used in your codebase) and normalize to PascalCase
+  const raw = name.startsWith('_') ? name.substring(1) : name
+  const normalized = String(raw)
+    .replace(/[^a-z0-9]+/gi, ' ') // replace non-alnum with space
+    .split(/\s+/)
+    .map((w) => (w ? w[0].toUpperCase() + w.slice(1) : ''))
+    .join('')
 
-    // console.log('Icon', props.name, iconName, IconI)
+  const IconComponent = (Icon as any)[normalized]
 
-    return (
-        <IconI {...props} />
-    )
+  if (!IconComponent) {
+    // icon not found — avoid rendering undefined
+    return null
+  }
+
+  return <IconComponent {...rest} />
 }

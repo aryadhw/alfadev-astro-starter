@@ -1,0 +1,50 @@
+---
+import Section from "@/components/core/Section.astro";
+import Features from "@/components/Features.astro";
+import Testimonial from "@/components/Testimonial.astro";
+import Stats from "@/components/Stats.astro";
+import Pricing from "@/components/Pricing.astro";
+import FAQ from "@/components/FAQ.astro";
+import Base from "@/layouts/Base.astro";
+import Cta from "@/layouts/partials/Cta.astro";
+import { getEntry } from "astro:content";
+
+const service = await getEntry("services", "service1");
+const { banner, stats, sections, features, pricing, testimonial, faq, call_to_action } = service.data;
+---
+
+<Base entry_keys={["services", "service1"]}>
+  <!-- Banner -->
+  <section class="lg:mb-10 animate-fade-in">
+    <Section section={banner} />
+  </section>
+
+  <!-- Stats -->
+  {stats && stats.length > 0 && <Stats stats={stats} />}
+
+  <!-- Multi Section -->
+  {
+    sections && sections.length > 0 && (
+      <section class="multi-section">
+        {sections.map((section) => (
+          <Section section={section} />
+        ))}
+      </section>
+    )
+  }
+
+  <!-- Features -->
+  {features && <Features features={features} />}
+
+  <!-- Pricing -->
+  {pricing && <Pricing pricing={pricing} />}
+
+  <!-- Testimonial -->
+  {testimonial && <Testimonial testimonial={testimonial} />}
+
+  <!-- FAQ -->
+  {faq && <FAQ faq={faq} />}
+
+  <!-- Call to Action -->
+  <Cta {...call_to_action} />
+</Base>

@@ -1,0 +1,51 @@
+---
+import { markdownify } from "@/lib/utils/textConverter";
+
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
+export interface Props {
+  faq: {
+    title: string;
+    questions: FAQItem[];
+  };
+}
+
+const { faq } = Astro.props;
+const { title, questions } = faq;
+---
+
+<section class="section">
+  <div class="container">
+    <div class="row items-center">
+      <div class="col-12 lg:col-5 mb-8 lg:mb-0">
+        <h2 class="text-4xl md:text-5xl font-bold" set:html={markdownify(title)} />
+      </div>
+      
+      <div class="col-12 lg:col-7">
+        <div class="space-y-4">
+          {questions.map((item, index) => (
+            <details class="group rounded-lg border border-border bg-surface overflow-hidden">
+              <summary class="flex cursor-pointer items-center justify-between p-6 font-bold text-lg hover:bg-surface-secondary transition-colors">
+                <span>{item.question}</span>
+                <svg 
+                  class="h-6 w-6 flex-shrink-0 transition-transform group-open:rotate-45"
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+              </summary>
+              <div class="px-6 pb-6 text-text-secondary">
+                <p set:html={markdownify(item.answer)} />
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
